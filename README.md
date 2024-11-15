@@ -22,6 +22,7 @@ sudo apt install mysql-server
 ```
 ### Windows
 a. Install PHP
+
     1. Download PHP
 
         Go to the PHP for Windows page. https://windows.php.net/download/
@@ -79,3 +80,7 @@ DB_PASSWORD=password
 ```
 php -S localhost:8000
 ```
+
+Access the url in browser
+
+![Result](images/home.png)
