@@ -19,8 +19,11 @@ sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 composer -v
 
 sudo apt install mysql-server
+
+
 ```
 ### Windows
+
 a. Install PHP
 
     1. Download PHP
@@ -48,12 +51,22 @@ b. Install Composer
         ```
         composer --version
         ```
-c. Setup Mysql Database
+c. Install Mysql
 
-    1. Install Mysql
+## Setup Mysql Database
 
-    2. Create Database
+```
+mysql -u root -p
 
+CREATE USER 'your_user'@'localhost' IDENTIFIED BY 'your_password';
+
+CREATE DATABASE database_name;
+
+GRANT ALL PRIVILEGES ON database_name.* TO 'your_user'@'localhost';
+
+FLUSH PRIVILEGES;
+
+```
 
 ## Clone Project
 
