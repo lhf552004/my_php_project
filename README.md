@@ -54,9 +54,11 @@ c. Setup Mysql Database
     2. Create Database
 
 
-
 ## Clone Project
 
+```
+git clone https://github.com/lhf552004/my_php_project
+```
 ## Initialize
 
 ```
@@ -65,6 +67,13 @@ composer init
 
 ## Configure .env file
 
+```
+DB_HOST=localhost
+DB_NAME=my_database
+DB_USER=root
+DB_PASSWORD=password
+
+```
 ## Test
 
 ```
