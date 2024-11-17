@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-and-preview:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Check out the repository
