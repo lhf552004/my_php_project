@@ -1,0 +1,82 @@
+name: Server Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-preview:
+    runs-on: ubuntu-18.04
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up PHP environment
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: mysqli
+
+      # Step 3: Install system dependencies
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+          php \
+          php-cli \
+          unzip \
+          php-mysql \
+          php-mysqli \
+          mysql-server \
+          curl
+
+      # Step 4: Start MySQL service
+      - name: Start MySQL
+        run: sudo service mysql start
+
+      # Step 5: Configure MySQL (create database and user)
+      - name: Configure MySQL
+        run: |
+          mysql -e "CREATE DATABASE rms;"
+          mysql -e "CREATE USER 'testuser'@'localhost' IDENTIFIED BY 'testpassword';"
+          mysql -e "GRANT ALL PRIVILEGES ON rms.* TO 'testuser'@'localhost';"
+          mysql -e "FLUSH PRIVILEGES;"
+
+      # Step 6: Install Composer globally
+      - name: Install Composer
+        run: |
+          curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+      # Step 7: Create the .env file dynamically from GitHub secrets
+      - name: Create .env file
+        run: |
+          echo "DB_HOST=${{ secrets.DB_HOST }}" > .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASS=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "API_KEY=${{ secrets.API_KEY }}" >> .env
+
+      # Step 8: Install PHP dependencies
+      - name: Install PHP dependencies
+        run: composer install --no-scripts --no-interaction --prefer-dist
+
+      # Step 9: Start PHP built-in server
+      - name: Start PHP Server
+        run: php -S 0.0.0.0:8000 -t public &
+      
+      # Step 10: Expose the server with Ngrok (optional)
+      - name: Expose with Ngrok
+        run: |
+          curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+          echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+          sudo apt update && sudo apt install -y ngrok
+          ngrok http 8000 &
+        env:
+          NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+
+      # Step 11: Output Ngrok URL
+      - name: Show Ngrok URL
+        run: curl http://localhost:4040/api/tunnels
