@@ -65,7 +65,7 @@ jobs:
 
       # Step 9: Start PHP built-in server
       - name: Start PHP Server
-        run: php -S 0.0.0.0:8000 -t public &
+        run: php -S 0.0.0.0:8000 &
       
       # Step 10: Expose the server with Ngrok (optional)
       - name: Expose with Ngrok
